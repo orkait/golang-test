@@ -4,11 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 type PingResponse struct {
 	Ping     string `json:"ping"`
 	Response string `json:"response"`
+}
+
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	} else {
+		port = ":" + port
+	}
+
+	return port
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +42,7 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", pingHandler)
 	fmt.Println("Server is listening on http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(getPort(), nil)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
